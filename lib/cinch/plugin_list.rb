@@ -34,9 +34,16 @@ module Cinch
     end
 
     def unregister_plugin_class(plugin)
+      res = false
       monitor.synchronize {
-        self.dup.each { |x| unregister_plugin(x) if x.is_a? plugin }
+        self.dup.each { |x|
+          if x.is_a? plugin
+            unregister_plugin(x)
+            res = true
+          end
+        }
       }
+      res
     end
 
     # @since 2.0.0
