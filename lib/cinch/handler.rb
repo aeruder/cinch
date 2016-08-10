@@ -53,6 +53,7 @@ module Cinch
       @strip_colors        = options[:strip_colors]
       @args                = options[:args]
       @block               = block
+      @quitting            = false
 
       @thread_group = ThreadGroup.new
     end
@@ -62,6 +63,13 @@ module Cinch
     # @return [void]
     def unregister
       @bot.handlers.unregister(self)
+    end
+
+    # Ignore any further events
+    #
+    # @return [void]
+    def suspend
+      @quitting = true
     end
 
     # Stops execution of the handler. This means stopping and killing
@@ -87,6 +95,8 @@ module Cinch
     #   being passed as arguments
     # @return [Thread]
     def call(message, captures, arguments)
+      return nil if @quitting
+
       bargs = captures + arguments
 
       thread = Thread.new {

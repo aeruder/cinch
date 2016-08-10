@@ -479,13 +479,15 @@ module Cinch
     # @since 2.0.0
     def unregister
       @bot.loggers.debug "[plugin] #{self.class.plugin_name}: Unloading plugin"
-      @timers.each do |timer|
-        timer.stop
-      end
 
       handlers.each do |handler|
+        handler.suspend
         handler.stop
         handler.unregister
+      end
+
+      @timers.each do |timer|
+        timer.stop
       end
     end
 
